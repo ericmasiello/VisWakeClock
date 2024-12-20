@@ -9,9 +9,7 @@ import Testing
 @testable import VisWakeClock
 
 struct VisWakeClockTests {
-
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-    }
-
+  @Test func example() async throws {
+    #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 12, day: 20)!) == .snow)
+  }
 }
