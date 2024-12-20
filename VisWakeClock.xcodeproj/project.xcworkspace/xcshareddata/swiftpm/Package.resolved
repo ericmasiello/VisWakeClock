@@ -1,0 +1,33 @@
+{
+  "originHash" : "e9b50cd220879bbb1ba479a250b1d587830857da8e2e0944efa7dc7d19e68530",
+  "pins" : [
+    {
+      "identity" : "flatbuffers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/flatbuffers.git",
+      "state" : {
+        "revision" : "595bf0007ab1929570c7671f091313c8fc20644e",
+        "version" : "24.3.25"
+      }
+    },
+    {
+      "identity" : "sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/open-meteo/sdk",
+      "state" : {
+        "branch" : "main",
+        "revision" : "9924b6a8627cd4237fd955445cf3d0b99e1db0bf"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "c1404acfa3a71e42aa789c6d5564da59d4377569",
+        "version" : "8.42.1"
+      }
+    }
+  ],
+  "version" : 3
+}

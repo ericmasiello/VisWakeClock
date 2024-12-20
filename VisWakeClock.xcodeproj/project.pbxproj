@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4DDA70742D15D01B00E4D265 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 4DDA70732D15D01B00E4D265 /* Sentry */; };
+		4DDA70762D15D01F00E4D265 /* OpenMeteoSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 4DDA70752D15D01F00E4D265 /* OpenMeteoSdk */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4DDA701C2D15C60000E4D265 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DDA70762D15D01F00E4D265 /* OpenMeteoSdk in Frameworks */,
+				4DDA70742D15D01B00E4D265 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,7 @@
 				4DDA700C2D15C5FF00E4D265 /* VisWakeClock */,
 				4DDA701E2D15C60000E4D265 /* VisWakeClockTests */,
 				4DDA70282D15C60000E4D265 /* VisWakeClockUITests */,
+				4DDA70722D15D01B00E4D265 /* Frameworks */,
 				4DDA700B2D15C5FF00E4D265 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +98,13 @@
 				4DDA70252D15C60000E4D265 /* VisWakeClockUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4DDA70722D15D01B00E4D265 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +127,8 @@
 			);
 			name = VisWakeClock;
 			packageProductDependencies = (
+				4DDA70732D15D01B00E4D265 /* Sentry */,
+				4DDA70752D15D01F00E4D265 /* OpenMeteoSdk */,
 			);
 			productName = VisWakeClock;
 			productReference = 4DDA700A2D15C5FF00E4D265 /* VisWakeClock.app */;
@@ -195,6 +212,10 @@
 			);
 			mainGroup = 4DDA70012D15C5FF00E4D265;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				4DDA70712D15CD8A00E4D265 /* XCRemoteSwiftPackageReference "sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4DDA700B2D15C5FF00E4D265 /* Products */;
 			projectDirPath = "";
@@ -393,6 +414,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = VisWakeClock/VisWakeClock.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -401,16 +423,26 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.synbydesign.VisWakeClock;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VisWake-Clock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -420,6 +452,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = VisWakeClock/VisWakeClock.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -428,16 +461,26 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.synbydesign.VisWakeClock;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VisWake-Clock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -549,6 +592,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.42.1;
+			};
+		};
+		4DDA70712D15CD8A00E4D265 /* XCRemoteSwiftPackageReference "sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/open-meteo/sdk";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4DDA70732D15D01B00E4D265 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+		4DDA70752D15D01F00E4D265 /* OpenMeteoSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4DDA70712D15CD8A00E4D265 /* XCRemoteSwiftPackageReference "sdk" */;
+			productName = OpenMeteoSdk;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4DDA70022D15C5FF00E4D265 /* Project object */;
 }
