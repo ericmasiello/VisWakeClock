@@ -129,7 +129,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
   }
 
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-//    SentrySDK.capture(error: error)
+    SentrySDK.capture(error: error)
   }
 
   func requestAccess() {

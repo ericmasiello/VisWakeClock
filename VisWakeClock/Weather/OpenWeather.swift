@@ -5,7 +5,7 @@
 //  Created by Eric Masiello on 10/24/24.
 //
 import Foundation
-//import Sentry
+import Sentry
 import OpenMeteoSdk
 
 /// Make sure the URL contains `&format=flatbuffers`
@@ -22,12 +22,12 @@ enum WeatherClient {
     let responses = try? await WeatherApiResponse.fetch(url: url)
 
     guard let responses else {
-//      SentrySDK.capture(message: "No responses")
+      SentrySDK.capture(message: "No responses")
       return nil
     }
     
     guard let response = responses.first else {
-//      SentrySDK.capture(message: "Weather response is empty")
+      SentrySDK.capture(message: "Weather response is empty")
       return nil
     }
 
@@ -35,12 +35,12 @@ enum WeatherClient {
     let utcOffsetSeconds = response.utcOffsetSeconds
     
     guard let current = response.current else {
-//      SentrySDK.capture(message: "No current weather data")
+      SentrySDK.capture(message: "No current weather data")
       return nil
     }
     
     guard let daily = response.daily else {
-//      SentrySDK.capture(message: "No daily weather data")
+      SentrySDK.capture(message: "No daily weather data")
       return nil
     }
 
