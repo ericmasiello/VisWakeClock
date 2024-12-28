@@ -32,28 +32,72 @@ public struct DaysUntilView: View {
   }
   
   public var body: some View {
+    
     if let event = EventHelper.nextEvent(events, from: referenceDate), let days = try? daysUntilEvent(event) {
-      Text("\(days) days until \(event.name)")
+      switch days {
+      case 0:
+        Text("Today is \(event.name)!")
+      case 1:
+        Text("Tomorrow is \(event.name)!")
+      default:
+        Text("\(days) days until \(event.name)")
+      }
     } else {
       EmptyView()
     }
   }
 }
 
-#Preview {
-  let formatter = DateFormatter()
-  formatter.dateFormat = "yyyy/MM/dd HH:mm"
-  let referenceDate = formatter.date(from: "2024/12/17 21:59")!
-  
-  // create a date for 12/31/2024
-  let christmasDate = formatter.date(from: "2024/12/25 21:38")!
-  
-  let nyeDate = formatter.date(from: "2024/12/31 00:01")!
-  
+#Preview("Multiple days countdown") {
+  let referenceDate = DateHelper.createDateFromString(year: 2024, month: 12, day: 17)!
   
   let events: [CountdownEvent] = [
-    CountdownEvent(date: nyeDate, name: "NYE"),
-    CountdownEvent(date: christmasDate, name: "Christmas"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 31)!, name: "NYE"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!, name: "Christmas"),
+  ]
+  
+  return DaysUntilView(events: events, referenceDate: referenceDate)
+}
+
+#Preview("Day before countdown") {
+  let referenceDate = DateHelper.createDateFromString(year: 2024, month: 12, day: 24)!
+  
+  let events: [CountdownEvent] = [
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 31)!, name: "NYE"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!, name: "Christmas"),
+  ]
+  
+  return DaysUntilView(events: events, referenceDate: referenceDate)
+}
+
+#Preview("Zero days") {
+  let referenceDate = DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!
+  
+  let events: [CountdownEvent] = [
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 31)!, name: "NYE"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!, name: "Christmas"),
+  ]
+  
+  return DaysUntilView(events: events, referenceDate: referenceDate)
+}
+
+#Preview("Next event") {
+  let referenceDate = DateHelper.createDateFromString(year: 2024, month: 12, day: 26)!
+  
+  let events: [CountdownEvent] = [
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 31)!, name: "NYE"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!, name: "Christmas"),
+  ]
+  
+  return DaysUntilView(events: events, referenceDate: referenceDate)
+}
+
+#Preview("No Events") {
+  let referenceDate = DateHelper.createDateFromString(year: 2025, month: 01, day: 01)!
+  
+  let events: [CountdownEvent] = [
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 31)!, name: "NYE"),
+    CountdownEvent(date: DateHelper.createDateFromString(year: 2024, month: 12, day: 25)!, name: "Christmas"),
   ]
   
   return DaysUntilView(events: events, referenceDate: referenceDate)
