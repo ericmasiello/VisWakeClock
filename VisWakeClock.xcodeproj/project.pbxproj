@@ -215,6 +215,7 @@
 			packageReferences = (
 				4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				4DDA70712D15CD8A00E4D265 /* XCRemoteSwiftPackageReference "sdk" */,
+				4D9314BA2D206A330060C71E /* XCRemoteSwiftPackageReference "ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4DDA700B2D15C5FF00E4D265 /* Products */;
@@ -606,6 +607,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4D9314BA2D206A330060C71E /* XCRemoteSwiftPackageReference "ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/statsig-io/ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.49.0;
+			};
+		};
 		4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
