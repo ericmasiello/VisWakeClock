@@ -8,21 +8,21 @@
 import Testing
 @testable import VisWakeClock
 
-struct EmojiManagerTests {
+@Suite("Emoji Manager Tests") struct EmojiManagerTests {
   
-  @Test func shouldReturnHalloweenEmojiForDate() async throws {
+  @Test("should return the halloween emoji when the month is October") func shouldReturnHalloweenEmojiForDate() async throws {
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 10, day: 01)!) == .halloween)
   }
   
-  @Test func shouldReturnThanksgivingEmojiForDate() async throws {
+  @Test("should return the thanksgiving emoji when the month is November") func shouldReturnThanksgivingEmojiForDate() async throws {
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 11, day: 01)!) == .thanksgiving)
   }
   
-  @Test func shouldReturnSnowEmojiForDate() async throws {
+  @Test("should return the snow emoji when the month is December") func shouldReturnSnowEmojiForDate() async throws {
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 12, day: 01)!) == .snow)
   }
   
-  @Test func shouldReturnSparklesForEveryOtherMonth() async throws {
+  @Test("should return the sparkles emoji every other month") func shouldReturnSparklesForEveryOtherMonth() async throws {
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 1, day: 01)!) == .sparkles)
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 2, day: 01)!) == .sparkles)
     #expect(EmojiManager.option(by: DateHelper.createDateFromString(year: 2024, month: 3, day: 01)!) == .sparkles)

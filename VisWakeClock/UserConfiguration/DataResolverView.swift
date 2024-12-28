@@ -29,7 +29,7 @@ struct DataResolverView: View {
 
       // initialize with some defaults if not yet set
       let config = UserConfiguration(
-        wakeupTime: UserConfiguration.createWakeTime(hour: 6, minutes: 15))
+        wakeupTime: DateHelper.createDateFromString(hour: 6, minute: 15) ?? Date())
       modelContext.insert(config)
     }
   }
@@ -40,7 +40,7 @@ struct DataResolverView: View {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try ModelContainer(for: UserConfiguration.self, configurations: config)
     
-    let userConfig = UserConfiguration(wakeupTime: UserConfiguration.createWakeTime(hour: 6, minutes: 20))
+    let userConfig = UserConfiguration(wakeupTime: DateHelper.createDateFromString(hour: 8, minute: 15)!)
     
     container.mainContext.insert(userConfig)
     

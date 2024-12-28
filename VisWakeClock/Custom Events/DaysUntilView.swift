@@ -16,29 +16,11 @@ public struct DaysUntilView: View {
   var events: [CountdownEvent]
   var referenceDate: Date = Date()
   
-  var nextEvent: CountdownEvent? {
-    
-    events
-    // sort events by date
-      .sorted { $0.date < $1.date }
-    // grab the next one that happens after today
-      .first { $0.date >= referenceDate }
-  }
-  
-  private func normalizeDate(_ date: Date) -> Date? {
-    var dateComponents = Calendar.current.dateComponents([.day], from: date)
-    dateComponents.hour = 0
-    dateComponents.minute = 0
-    dateComponents.second = 0
-    
-    return Calendar.current.date(from: dateComponents)
-  }
-  
   func daysUntilEvent(_ event: CountdownEvent) throws -> Int {
-    guard let eventDate = normalizeDate(event.date) else {
+    guard let eventDate = DateHelper.normalizeTimeFromDate(event.date) else {
       throw EventErrorKind.invalidDate("Invalid event date", event.date)
     }
-    guard let referenceDate = normalizeDate(referenceDate) else {
+    guard let referenceDate = DateHelper.normalizeTimeFromDate(referenceDate) else {
       throw EventErrorKind.invalidDate("Invalid reference date", referenceDate)
     }
     
@@ -50,8 +32,8 @@ public struct DaysUntilView: View {
   }
   
   public var body: some View {
-    if let event = nextEvent, let days = try? daysUntilEvent(event) {
-      Text("\(days) days until \(event.name)")      
+    if let event = EventHelper.nextEvent(events, from: referenceDate), let days = try? daysUntilEvent(event) {
+      Text("\(days) days until \(event.name)")
     } else {
       EmptyView()
     }
@@ -59,7 +41,6 @@ public struct DaysUntilView: View {
 }
 
 #Preview {
-  
   let formatter = DateFormatter()
   formatter.dateFormat = "yyyy/MM/dd HH:mm"
   let referenceDate = formatter.date(from: "2024/12/17 21:59")!

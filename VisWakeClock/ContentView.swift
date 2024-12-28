@@ -42,7 +42,7 @@ struct ContentView: View {
 }
 
 #Preview {
-  let userConfig = UserConfiguration(wakeupTime: UserConfiguration.createWakeTime(hour: 8, minutes: 15))
+  let userConfig = UserConfiguration(wakeupTime: DateHelper.createDateFromString(hour: 8, minute: 15)!)
   
   return ContentView(userConfig: userConfig)
     .preferredColorScheme(.dark)
