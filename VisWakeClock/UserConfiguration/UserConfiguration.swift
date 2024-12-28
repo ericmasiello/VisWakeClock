@@ -16,10 +16,13 @@ struct CountdownEvent: Codable, Identifiable, Equatable {
 
 @Model
 class UserConfiguration {
+  var id: UUID = UUID()
   var wakeupTime: Date? = Date.now
   var wakeupDuration: Double = 45
   var isIdleTimerDisabled: Bool = true
   var countdownEvents: [CountdownEvent] = []
+  
+  var stringId: String { id.uuidString }
 
   init(wakeupTime: Date) {
     self.wakeupTime = wakeupTime

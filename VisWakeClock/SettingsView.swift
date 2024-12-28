@@ -4,6 +4,7 @@
 //
 //  Created by Eric Masiello on 11/11/24.
 //
+import Statsig
 import SwiftData
 import SwiftUI
 
@@ -27,6 +28,7 @@ struct EventName: View {
           }
           
           userConfiguration.countdownEvents.remove(at: index)
+          Statsig.logEvent("settingsView.eventDeleted")
           
         }) {
           Image(systemName: "trash")
@@ -39,7 +41,6 @@ struct SettingsView: View {
   @Bindable var userConfiguration: UserConfiguration
   @State private var wakeupTime: Date
   @State private var isIdleTimerDisabled: Bool
-//  @State private var showCountdownEventForm = false
   @State private var newCountdownEvent = CountdownEvent(date: Date(), name: "")
 
   init(userConfiguration: UserConfiguration) {
@@ -74,6 +75,7 @@ struct SettingsView: View {
           }
           
           self.userConfiguration.wakeupTime = newValue
+          Statsig.logEvent("settingsView.wakeUpTimeChanged")
         }
         
         Toggle("Keep screen on", isOn: $isIdleTimerDisabled)
@@ -82,6 +84,7 @@ struct SettingsView: View {
               return
             }
             self.userConfiguration.isIdleTimerDisabled = newValue
+            Statsig.logEvent("settingsView.keepScreenOnChanged", metadata: ["state": String(newValue)])
           }
       }
       
@@ -96,6 +99,7 @@ struct SettingsView: View {
         Button("Add Event") {
           userConfiguration.countdownEvents.append(newCountdownEvent)
           newCountdownEvent = CountdownEvent(date: Date(), name: "")
+          Statsig.logEvent("settingsView.newEventAdded")
         }
         .disabled(newCountdownEvent.name.isEmpty)
       }
@@ -113,6 +117,9 @@ struct SettingsView: View {
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
     #endif
+      .onAppear {
+        Statsig.logEvent("settingsViewDidAppear")
+      }
   }
 }
 
