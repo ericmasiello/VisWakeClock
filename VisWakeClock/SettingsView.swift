@@ -4,43 +4,16 @@
 //
 //  Created by Eric Masiello on 11/11/24.
 //
+import Statsig
 import SwiftData
 import SwiftUI
-
-struct EventName: View {
-  @Bindable var userConfiguration: UserConfiguration
-  var event: CountdownEvent
-  
-  func formatEventDate(_ date: Date) -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "MM/dd/yyyy"
-    return formatter.string(from: date)
-  }
-  
-  var body: some View {
-    Text("\(event.name) on \(formatEventDate(event.date))")
-      .swipeActions {
-        Button(role: .destructive, action: {
-          // find the index of the item matching the event
-          guard let index = userConfiguration.countdownEvents.firstIndex(of: event) else {
-            return
-          }
-          
-          userConfiguration.countdownEvents.remove(at: index)
-          
-        }) {
-          Image(systemName: "trash")
-        }
-      }
-  }
-}
 
 struct SettingsView: View {
   @Bindable var userConfiguration: UserConfiguration
   @State private var wakeupTime: Date
   @State private var isIdleTimerDisabled: Bool
-//  @State private var showCountdownEventForm = false
   @State private var newCountdownEvent = CountdownEvent(date: Date(), name: "")
+  @State private var newCountdownEventMode: EditEventMode = .add
 
   init(userConfiguration: UserConfiguration) {
     self.userConfiguration = userConfiguration
@@ -74,6 +47,7 @@ struct SettingsView: View {
           }
           
           self.userConfiguration.wakeupTime = newValue
+          Statsig.logEvent("settingsView.wakeUpTimeChanged")
         }
         
         Toggle("Keep screen on", isOn: $isIdleTimerDisabled)
@@ -82,6 +56,7 @@ struct SettingsView: View {
               return
             }
             self.userConfiguration.isIdleTimerDisabled = newValue
+            Statsig.logEvent("settingsView.keepScreenOnChanged", metadata: ["state": String(newValue)])
           }
       }
       
@@ -93,16 +68,42 @@ struct SettingsView: View {
           selection: $newCountdownEvent.date,
           displayedComponents: [.date]
         )
-        Button("Add Event") {
-          userConfiguration.countdownEvents.append(newCountdownEvent)
-          newCountdownEvent = CountdownEvent(date: Date(), name: "")
+        
+        switch newCountdownEventMode {
+          case .add:
+            Button("Add Event") {
+              userConfiguration.countdownEvents.append(newCountdownEvent)
+              newCountdownEvent = CountdownEvent(date: Date(), name: "")
+              Statsig.logEvent("settingsView.newEventAdded")
+            }
+            .disabled(newCountdownEvent.name.isEmpty)
+          case .edit(id: let id):
+            Button("Update Event") {
+              userConfiguration.countdownEvents.removeAll { $0.id == id }
+              userConfiguration.countdownEvents.append(newCountdownEvent)
+              newCountdownEvent = CountdownEvent(date: Date(), name: "")
+              newCountdownEventMode = .add
+              
+              Statsig.logEvent("settingsView.existingEventUpdated")
+            }
+            .disabled(newCountdownEvent.name.isEmpty)
         }
-        .disabled(newCountdownEvent.name.isEmpty)
       }
       
       Section("Countdown Events") {
         List(userConfiguration.sortedCountdownEvents) { event in
-          EventName(userConfiguration: userConfiguration, event: event)
+          EventNameView(event: event, mode: Statsig.checkGate("edit_event") ? .editable : .readonly, handleRemoveEvent: { event in
+            guard let index = userConfiguration.countdownEvents.firstIndex(of: event) else {
+              return
+            }
+                  
+            userConfiguration.countdownEvents.remove(at: index)
+            Statsig.logEvent("settingsView.eventDeleted")
+          }) { updateEvent in
+            newCountdownEvent.name = updateEvent.name
+            newCountdownEvent.date = updateEvent.date
+            newCountdownEventMode = .edit(id: event.id)
+          }
         }
         if userConfiguration.sortedCountdownEvents.count == 0 {
           Text("No events added yet")
@@ -113,6 +114,9 @@ struct SettingsView: View {
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
     #endif
+      .onAppear {
+        Statsig.logEvent("settingsViewDidAppear")
+      }
   }
 }
 

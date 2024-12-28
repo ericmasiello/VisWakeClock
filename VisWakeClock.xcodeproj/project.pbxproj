@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D9314BC2D206B1F0060C71E /* Statsig in Frameworks */ = {isa = PBXBuildFile; productRef = 4D9314BB2D206B1F0060C71E /* Statsig */; };
 		4DDA70742D15D01B00E4D265 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 4DDA70732D15D01B00E4D265 /* Sentry */; };
 		4DDA70762D15D01F00E4D265 /* OpenMeteoSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 4DDA70752D15D01F00E4D265 /* OpenMeteoSdk */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D9314BC2D206B1F0060C71E /* Statsig in Frameworks */,
 				4DDA70762D15D01F00E4D265 /* OpenMeteoSdk in Frameworks */,
 				4DDA70742D15D01B00E4D265 /* Sentry in Frameworks */,
 			);
@@ -129,6 +131,7 @@
 			packageProductDependencies = (
 				4DDA70732D15D01B00E4D265 /* Sentry */,
 				4DDA70752D15D01F00E4D265 /* OpenMeteoSdk */,
+				4D9314BB2D206B1F0060C71E /* Statsig */,
 			);
 			productName = VisWakeClock;
 			productReference = 4DDA700A2D15C5FF00E4D265 /* VisWakeClock.app */;
@@ -215,6 +218,7 @@
 			packageReferences = (
 				4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				4DDA70712D15CD8A00E4D265 /* XCRemoteSwiftPackageReference "sdk" */,
+				4D9314BA2D206A330060C71E /* XCRemoteSwiftPackageReference "ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4DDA700B2D15C5FF00E4D265 /* Products */;
@@ -606,6 +610,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4D9314BA2D206A330060C71E /* XCRemoteSwiftPackageReference "ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/statsig-io/ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.49.0;
+			};
+		};
 		4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
@@ -625,6 +637,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4D9314BB2D206B1F0060C71E /* Statsig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D9314BA2D206A330060C71E /* XCRemoteSwiftPackageReference "ios-sdk" */;
+			productName = Statsig;
+		};
 		4DDA70732D15D01B00E4D265 /* Sentry */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4DDA70702D15CD4200E4D265 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;

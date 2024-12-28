@@ -1,5 +1,5 @@
 {
-  "originHash" : "e9b50cd220879bbb1ba479a250b1d587830857da8e2e0944efa7dc7d19e68530",
+  "originHash" : "4e5d9b75187155a9e0ca6c6e14be16a0095c062b0c82caf376211e55b98d8238",
   "pins" : [
     {
       "identity" : "flatbuffers",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "595bf0007ab1929570c7671f091313c8fc20644e",
         "version" : "24.3.25"
+      }
+    },
+    {
+      "identity" : "ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/statsig-io/ios-sdk.git",
+      "state" : {
+        "revision" : "af44eda6f02e203d96eb62fa733e23efd231637f",
+        "version" : "1.49.0"
       }
     },
     {

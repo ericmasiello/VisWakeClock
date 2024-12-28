@@ -8,6 +8,7 @@
 import Sentry
 import SwiftData
 import SwiftUI
+import Statsig
 
 @main
 struct VisWakeClockApp: App {
@@ -27,8 +28,17 @@ struct VisWakeClockApp: App {
       options.attachScreenshot = true // This adds a screenshot to the error events
       options.attachViewHierarchy = true // This adds the view hierarchy to the error events
     }
-    // Remove the next line after confirming that your Sentry integration is working.
-//        SentrySDK.capture(message: "This app uses Sentry! :)")
+    
+    Statsig.initialize(sdkKey: "client-hnmNZKXyozBgNH11IxjD2iAwTZ1b9YlYQrq4fHQwC56") { error in
+      if let error = error {
+        /**
+         note: this can happen if the user is offline so we may want to expore batter patterns for this or potentially
+         not logging it whatsoever.
+         */
+        SentrySDK.capture(message: "Failed to initialized Statsig with error \(String(describing: error))")
+        return
+      }
+    }
   }
 
   var body: some Scene {
