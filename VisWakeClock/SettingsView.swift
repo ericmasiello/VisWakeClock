@@ -44,9 +44,9 @@ struct SettingsView: View {
 
   init(userConfiguration: UserConfiguration) {
     self.userConfiguration = userConfiguration
-    self.wakeupTime =
-      userConfiguration.wakeupTime ?? UserConfiguration.createWakeTime(hour: 12, minutes: 0)
     self.isIdleTimerDisabled = userConfiguration.isIdleTimerDisabled
+    
+    self.wakeupTime = userConfiguration.wakeupTime ?? DateHelper.createDateFromString(hour: 12, minute: 0) ?? Date()
   }
 
   func formatTime(_ date: Date?) -> String {
@@ -120,7 +120,8 @@ struct SettingsView: View {
   let config = ModelConfiguration(isStoredInMemoryOnly: true)
   let container = try! ModelContainer(for: UserConfiguration.self, configurations: config)
   let userConfig = UserConfiguration(
-    wakeupTime: UserConfiguration.createWakeTime(hour: 6, minutes: 15))
+    wakeupTime: DateHelper.createDateFromString(hour: 6, minute: 15)!
+  )
 
   NavigationStack {
     SettingsView(userConfiguration: userConfig).modelContainer(container)
