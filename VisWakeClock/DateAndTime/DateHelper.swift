@@ -28,7 +28,7 @@ class DateHelper {
    * This is useful when comparing two dates but you want to ignore the time component.
    */
   static func normalizeTimeFromDate(_ date: Date) -> Date? {
-    var dateComponents = Calendar.current.dateComponents([.day], from: date)
+    var dateComponents = Calendar.current.dateComponents([.day, .month, .year], from: date)
     dateComponents.hour = 0
     dateComponents.minute = 0
     dateComponents.second = 0
