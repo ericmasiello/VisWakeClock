@@ -35,9 +35,22 @@
 		4DDA70252D15C60000E4D265 /* VisWakeClockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisWakeClockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4D479D892D20D81C00AB14B6 /* Exceptions for "VisWakeClock" folder in "VisWakeClock" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4DDA70092D15C5FF00E4D265 /* VisWakeClock */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4DDA700C2D15C5FF00E4D265 /* VisWakeClock */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4D479D892D20D81C00AB14B6 /* Exceptions for "VisWakeClock" folder in "VisWakeClock" target */,
+			);
 			path = VisWakeClock;
 			sourceTree = "<group>";
 		};
@@ -427,6 +440,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VisWakeClock/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
@@ -465,6 +479,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VisWakeClock/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
