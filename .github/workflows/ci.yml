@@ -1,0 +1,13 @@
+name: tests
+
+on: [push]
+
+jobs:
+  run_tests:
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@v1
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode_16.0.app && /usr/bin/xcodebuild -version
+    - name: Run tests
+      run: xcodebuild test -project VisWakeClock.xcodeproj -scheme VisWakeClock -destination 'platform=iOS Simulator,name=iPad (10th generation),OS=18.2' | xcpretty && exit ${PIPESTATUS[0]}      

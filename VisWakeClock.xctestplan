@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "8148FAFD-5CEA-4467-999D-484A2060C610",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:VisWakeClock.xcodeproj",
+      "identifier" : "4DDA70092D15C5FF00E4D265",
+      "name" : "VisWakeClock"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:VisWakeClock.xcodeproj",
+        "identifier" : "4DDA701A2D15C60000E4D265",
+        "name" : "VisWakeClockTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:VisWakeClock.xcodeproj",
+        "identifier" : "4DDA70242D15C60000E4D265",
+        "name" : "VisWakeClockUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
