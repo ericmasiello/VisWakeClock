@@ -30,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D479D8A2D20D98400AB14B6 /* VisWakeClock.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = VisWakeClock.xctestplan; sourceTree = "<group>"; };
 		4DDA700A2D15C5FF00E4D265 /* VisWakeClock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisWakeClock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DDA701B2D15C60000E4D265 /* VisWakeClockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisWakeClockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DDA70252D15C60000E4D265 /* VisWakeClockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisWakeClockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +98,7 @@
 		4DDA70012D15C5FF00E4D265 = {
 			isa = PBXGroup;
 			children = (
+				4D479D8A2D20D98400AB14B6 /* VisWakeClock.xctestplan */,
 				4DDA700C2D15C5FF00E4D265 /* VisWakeClock */,
 				4DDA701E2D15C60000E4D265 /* VisWakeClockTests */,
 				4DDA70282D15C60000E4D265 /* VisWakeClockUITests */,
