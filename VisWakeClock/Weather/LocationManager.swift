@@ -34,7 +34,7 @@ struct GPSCoordinateNormalizer {
       let location2 = CLLocation(latitude: coordinate2.latitude, longitude: coordinate2.longitude)
 
       // Converts distance to miles (1 mile = 1609.344 meters)
-      return location1.distance(from: location2) / 1609.344  // Convert meters to miles
+      return location1.distance(from: location2) / 1609.344 // Convert meters to miles
     }
 
     /// Checks if the coordinate is significantly different from another coordinate
@@ -62,7 +62,6 @@ struct GPSCoordinateNormalizer {
 }
 
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-  
   private let manager = CLLocationManager()
 
   @Published var lat: Double?
@@ -114,8 +113,8 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
   }
 
   func locationManager(
-    _ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus
-  ) {
+    _ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus)
+  {
     locationStatus = status
 
     switch status {
@@ -129,7 +128,25 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
   }
 
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-    SentrySDK.capture(error: error)
+    guard let error = (error as NSError?), error.domain == kCLErrorDomain else {
+      SentrySDK.capture(error: error)
+      return
+    }
+
+    // if we get here, this was a CoreLocation Error, in which case there's nothing
+    // worth reporting to sentry because we can't do anything about it.
+    #if DEBUG
+    switch CLError.Code(rawValue: error.code) {
+    case .denied:
+      debugPrint("Location access denied")
+    case .locationUnknown:
+      debugPrint("Location unknown")
+    case .network:
+      debugPrint("Network error")
+    default:
+      debugPrint("Other Core Location error: \(error.code)")
+    }
+    #endif
   }
 
   func requestAccess() {
