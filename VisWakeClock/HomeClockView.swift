@@ -5,8 +5,8 @@
 //  Created by Eric Masiello on 11/11/24.
 //
 
-import SwiftUI
 import Statsig
+import SwiftUI
 
 typealias HandleBackTapped = () -> Void
 
@@ -15,17 +15,37 @@ struct HomeClockView: View {
   @StateObject private var locationManager: LocationManager
   @StateObject private var weatherManager: WeatherManager
   @StateObject private var dateTimeManager: DateTimeManager
-
+  @State private var fontSize: CGFloat = 0
   var handleBackTapped: HandleBackTapped
-
-  init(userConfiguration: UserConfiguration, handleBackTapped: @escaping HandleBackTapped) {
-    self.userConfiguration = userConfiguration
+  
+  init(userConfiguration config: UserConfiguration, handleBackTapped closure: @escaping HandleBackTapped) {
+    userConfiguration = config
     let lm = LocationManager()
     _locationManager = StateObject(wrappedValue: lm)
     _weatherManager = StateObject(wrappedValue: WeatherManager(locationManager: lm))
-
     _dateTimeManager = StateObject(wrappedValue: DateTimeManager())
-    self.handleBackTapped = handleBackTapped
+    handleBackTapped = closure
+    _fontSize = State(wrappedValue: computeSize())
+  }
+  
+  func computeSize() -> CGFloat {
+    let denominator = 5.0
+    var fudge = (((denominator - 1) * 2) * -1) // - 32
+
+    if UIDevice.current.userInterfaceIdiom == .phone {
+      fudge -= 12
+    } else if UIDevice.current.userInterfaceIdiom == .pad {
+      fudge -= 32
+    }
+
+    #if os(iOS)
+      let size = (UIScreen.main.bounds.width / denominator) + fudge
+      print("[BounceDebug] new size \(size) for \(UIScreen.main.bounds.width)")
+    #else
+      #warning("TODO: Unsupported platform")
+      let size = CGFloat(0)
+    #endif
+    return size
   }
 
   func formatTime(_ date: Date?) -> String {
@@ -39,24 +59,11 @@ struct HomeClockView: View {
     return formatter.string(from: date)
   }
 
-  private var size: CGFloat {
-    let denominator = 5.0
-    let fudge = (((denominator - 1) * 2) * -1) - 32
-  #if os(iOS)
-    let size = (UIScreen.main.bounds.width / denominator) + fudge
-  #else
-  #warning("TODO: Unsupported platform")
-    let size = CGFloat(0)
-  #endif
-    return size
-  }
-
   private var emojiOption: EmojiOption {
     EmojiManager.option(by: dateTimeManager.now)
   }
 
   private var viewMode: ViewMode {
-
     guard let wakeupTime = userConfiguration.wakeupTime else {
       return .dim
     }
@@ -73,16 +80,17 @@ struct HomeClockView: View {
   }
 
   var body: some View {
-    BounceView {
+    // pass the fontSize to BounceView to force it to recompute the geometry reader
+    BounceView(recomputeValue: fontSize) {
       Button(action: {
         handleBackTapped()
       }) {
         VStack(alignment: .leading, spacing: 0) {
           if viewMode == .active {
-            EmojiView(option: emojiOption, size: size)
+            EmojiView(option: emojiOption, size: fontSize)
           }
           DaysUntilView(events: userConfiguration.countdownEvents).padding(.bottom, 8).font(.headline)
-          ClockView(size: size, viewMode: viewMode, now: dateTimeManager.now)
+          ClockView(size: fontSize, viewMode: viewMode, now: dateTimeManager.now)
           HStack {
             Text("Wake up time \(formatTime(userConfiguration.wakeupTime))")
             Spacer()
@@ -90,7 +98,7 @@ struct HomeClockView: View {
               .opacity(weatherManager.weather?.current.temperature2m == nil ? 0.0 : 1.0)
           }
         }
-        .fixedSize()  // constrains it to widest element
+        .fixedSize() // constrains it to widest element
         .opacity(viewMode == .dim ? 0.65 : 1)
       }
     }
@@ -99,8 +107,12 @@ struct HomeClockView: View {
     .onAppear {
       Statsig.logEvent("homeClockViewDidAppear")
       #if os(iOS)
-            UIApplication.shared.isIdleTimerDisabled = self.userConfiguration.isIdleTimerDisabled
-      #endif      
+        UIApplication.shared.isIdleTimerDisabled = self.userConfiguration.isIdleTimerDisabled
+      #endif
+    }
+    .onChange(of: UIScreen.main.bounds.width) {
+      // recompute fontSize whenever screen size changes
+      fontSize = computeSize()
     }
     .navigationBarBackButtonHidden()
   }
