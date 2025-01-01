@@ -12,10 +12,7 @@ struct BounceView<Content: View, R: Hashable>: View {
   @ViewBuilder let content: Content
   @State private var position: CGPoint = .init(x: 0, y: 0)
   @State private var velocity: CGSize = .init(width: 4, height: 4)
-  @State private var viewSize: CGSize = .init(width: 0, height: 0)
-  
-  // Control speed of animation
-  let animationDuration = 1.00
+  @State private var contentSize: CGSize = .init(width: 0, height: 0)
 
   func updatePositionAndVelocity() {
     var newPos = position
@@ -26,12 +23,12 @@ struct BounceView<Content: View, R: Hashable>: View {
     newPos.y += newVelocity.height
 
     // Bounce off the horizontal edges
-    if newPos.x - viewSize.width / 2 <= 0 || newPos.x + viewSize.width / 2 >= UIScreen.main.bounds.width {
+    if newPos.x - contentSize.width / 2 <= 0 || newPos.x + contentSize.width / 2 >= UIScreen.main.bounds.width {
       newVelocity.width = -newVelocity.width
     }
 
     // Bounce off the vertical edges
-    if newPos.y - viewSize.height / 2 <= 0 || newPos.y + viewSize.height / 2 >= UIScreen.main.bounds.height {
+    if newPos.y - contentSize.height / 2 <= 0 || newPos.y + contentSize.height / 2 >= UIScreen.main.bounds.height {
       newVelocity.height = -newVelocity.height
     }
 
@@ -41,42 +38,44 @@ struct BounceView<Content: View, R: Hashable>: View {
   }
 
   var body: some View {
-    ZStack {
-      content.background(
-        GeometryReader { contentViewProxy in
-          Color.clear
-            .onAppear {
-              viewSize = contentViewProxy.size // Measure view size
-              /**
-               * @note: We set the screenSize and position initially inside the scope of the GeometryReader
-               * because we need to reset these values whenever the orientation changes. We trigger re-rendering the
-               * GeometryReader by setting the `id(recomputeValue)`. This forces it to recalculate whenever the
-               * orientation changes
-               */
-              // we reset the position of the view whenever recompute value changes
-              position.x = UIScreen.main.bounds.midX
-              position.y = UIScreen.main.bounds.midY
-            }
-        }
+    content.background(
+      GeometryReader { contentViewProxy in
+        Color.clear
+          .onAppear {
+            contentSize = contentViewProxy.size // Measure view size
+
+            /**
+             * @note: We set the screenSize and position initially inside the scope of the GeometryReader
+             * because we need to reset these values whenever the orientation changes. We trigger re-rendering the
+             * GeometryReader by setting the `id(recomputeValue)`. This forces it to recalculate whenever the
+             * orientation changes
+             */
+            // we reset the position of the view whenever recompute value changes
+            position.x = UIScreen.main.bounds.midX
+            position.y = UIScreen.main.bounds.midY
+          }
           .id(recomputeValue) // forces the geometry reader to rerun when the recomputeValue changes
-      )
-      .position(position)
-      .onAppear {
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-          withAnimation(.linear(duration: animationDuration)) {
-            // skip animating until the viewSize is updated by the child view
-            if viewSize.width > 0 && viewSize.height > 0 {
-              updatePositionAndVelocity()
-            }
+      }
+    )
+    .position(position)
+    .onAppear {
+      /**
+       * Set the framerate to an internal of 1/60 to get 60fps.
+       * I then multiply it by 6 to slow it down to a reasonable speed, otherwise
+       * bounce animation is too fast.
+       */
+      let frameRate: Double = (1 / 60) * 6
+
+      let timer = Timer.scheduledTimer(withTimeInterval: frameRate, repeats: true) { _ in
+        withAnimation(.linear(duration: frameRate)) {
+          // skip animating until the viewSize is updated by the child view
+          if contentSize.width > 0 && contentSize.height > 0 {
+            updatePositionAndVelocity()
           }
         }
       }
-      /**
-       * kludge: for reasons I don't yet understand, upon rotating the device, the bounce view seems to miscalculate the the dimensions of the view its bouncing and ends up overshooting the screensize.
-       * However, if I nest the view inside a ZStack and render a clear view the full size of the UI, it works more consistently.
-       */
-      Color.clear
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+      // Keep timer running even when scrolling
+      RunLoop.current.add(timer, forMode: .common)
     }
   }
 }
