@@ -17,7 +17,7 @@ struct HomeClockView: View {
   @StateObject private var dateTimeManager: DateTimeManager
   @State private var fontSize: CGFloat = 0
   var handleBackTapped: HandleBackTapped
-  
+
   init(userConfiguration config: UserConfiguration, handleBackTapped closure: @escaping HandleBackTapped) {
     userConfiguration = config
     let lm = LocationManager()
@@ -27,11 +27,16 @@ struct HomeClockView: View {
     handleBackTapped = closure
     _fontSize = State(wrappedValue: computeSize())
   }
-  
+
   func computeSize() -> CGFloat {
     let denominator = 5.0
     var fudge = (((denominator - 1) * 2) * -1) // - 32
 
+    /**
+     * TODO: this could use some work but these values appear to work reasonably at the moment.
+     * We should validate it against more device sizes like smaller iPhones, bigger iPhones, and even
+     * an iPad Mini
+     */
     if UIDevice.current.userInterfaceIdiom == .phone {
       fudge -= 12
     } else if UIDevice.current.userInterfaceIdiom == .pad {
@@ -40,7 +45,6 @@ struct HomeClockView: View {
 
     #if os(iOS)
       let size = (UIScreen.main.bounds.width / denominator) + fudge
-      print("[BounceDebug] new size \(size) for \(UIScreen.main.bounds.width)")
     #else
       #warning("TODO: Unsupported platform")
       let size = CGFloat(0)
@@ -80,7 +84,6 @@ struct HomeClockView: View {
   }
 
   var body: some View {
-    // pass the fontSize to BounceView to force it to recompute the geometry reader
     BounceView(recomputeValue: fontSize) {
       Button(action: {
         handleBackTapped()
