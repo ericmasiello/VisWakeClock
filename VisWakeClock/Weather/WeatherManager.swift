@@ -7,6 +7,7 @@
 
 import Combine
 import CoreLocation
+import Sentry
 
 enum WeatherError: Error {
   case invalidResponse
@@ -36,8 +37,12 @@ class WeatherManager: ObservableObject {
         self?.cachedCoordinates = (latitude: coordinates.latitude, longitude: coordinates.longitude)
 
         self?.coordinateChangeTask = Task {
-          self?.weather = await WeatherClient.getWeather(
-            latitude: coordinates.latitude, longitude: coordinates.longitude)
+          do {
+            self?.weather = try await WeatherClient.getWeather(
+              latitude: coordinates.latitude, longitude: coordinates.longitude)
+          } catch {
+            SentrySDK.capture(error: error)
+          }
         }
         
         
@@ -52,8 +57,12 @@ class WeatherManager: ObservableObject {
           debugPrint("[timer] Fetching Weather Data from WeatherManager")
           guard let coordinates = self?.cachedCoordinates else { return }
 
-          self?.weather = await WeatherClient.getWeather(
-            latitude: coordinates.latitude, longitude: coordinates.longitude)
+          do {
+            self?.weather = try await WeatherClient.getWeather(
+              latitude: coordinates.latitude, longitude: coordinates.longitude)
+          } catch {
+            SentrySDK.capture(error: error)
+          }
         }
       }
   }
