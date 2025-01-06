@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BounceView<Content: View, R: Hashable>: View {
   var recomputeValue: R
+  @State private var timer: Timer? = nil
   @ViewBuilder let content: Content
   @State private var position: CGPoint = .init(x: 0, y: 0)
   @State private var velocity: CGSize = .init(width: 4, height: 4)
@@ -66,7 +67,7 @@ struct BounceView<Content: View, R: Hashable>: View {
        */
       let frameRate: Double = (1 / 60) * 6
 
-      let timer = Timer.scheduledTimer(withTimeInterval: frameRate, repeats: true) { _ in
+      timer = Timer.scheduledTimer(withTimeInterval: frameRate, repeats: true) { _ in
         withAnimation(.linear(duration: frameRate)) {
           // skip animating until the viewSize is updated by the child view
           if contentSize.width > 0 && contentSize.height > 0 {
@@ -74,8 +75,17 @@ struct BounceView<Content: View, R: Hashable>: View {
           }
         }
       }
+      
+      guard let timer = timer else {
+        return
+      }
       // Keep timer running even when scrolling
       RunLoop.current.add(timer, forMode: .common)
+      
+    }
+    .onDisappear {
+      // fixes https://github.com/ericmasiello/VisWakeClock/issues/13
+      timer?.invalidate()
     }
   }
 }
