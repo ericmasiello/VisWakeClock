@@ -30,6 +30,10 @@ class WeatherClient {
           // silently fail due to offline errors
           print("Network error: No internet connection or network connection lost.")
           return nil
+        case .timedOut:
+          // silently fail due to offline errors
+          print("Network error: Connection timed out.")
+          return nil
         default:
           throw error
         }
