@@ -21,6 +21,20 @@
                ReferencedContainer = "container:VisWakeClock.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4DDA70242D15C60000E4D265"
+               BuildableName = "VisWakeClockUITests.xctest"
+               BlueprintName = "VisWakeClockUITests"
+               ReferencedContainer = "container:VisWakeClock.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

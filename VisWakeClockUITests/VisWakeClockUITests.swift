@@ -27,7 +27,44 @@ final class VisWakeClockUITests: XCTestCase {
     let app = XCUIApplication()
     app.launch()
 
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    // Debug helper - lets you see all the staticTexts visible
+    
+//    let staticTexts = app.staticTexts
+//    for i in 0 ..< staticTexts.count {
+//      let text = staticTexts.element(boundBy: i)
+//      print(text.label)
+////      if text.label.starts(with: "create account") {
+////        text.tap()
+////        break
+////      }
+//    }
+    
+    /**
+     @note using `:` as a proxy for the time. Since I'm not mocking the time, we know the
+     clock will always display a ":" between the hours and minutes
+     */
+    let clockText = app.staticTexts[":"]
+    XCTAssert(clockText.exists, "Clock text does not exist")
+    
+    clockText.tap()
+    
+    let editSettingsTitle = app.staticTexts["Edit Settings"]
+    XCTAssert(editSettingsTitle.exists, "Edit Settings title does not exist")
+    
+    let eventNameTextField = app.textFields["Event name"]
+    XCTAssert(eventNameTextField.exists, "Event name does not exist")
+    
+    eventNameTextField.tap()
+    eventNameTextField.typeText("Test Event")
+    let addEventButton = app.buttons["Add Event"]
+    
+    XCTAssert(addEventButton.exists, "Add Event button does not exist")
+    XCTAssert(addEventButton.isEnabled, "Add Event button is not enabled")
+    
+    addEventButton.tap()
+    
+    let countDownEventsTitle = app.staticTexts["COUNTDOWN EVENTS"]
+    XCTAssert(countDownEventsTitle.exists, "Countdown Events title does not exist")
   }
 
   @MainActor
