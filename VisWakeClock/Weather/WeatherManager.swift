@@ -15,7 +15,6 @@ enum WeatherError: Error {
   case invalidData
 }
 
-@MainActor
 class WeatherManager: ObservableObject {
   @Published var weather: WeatherData?
   @Published var isLoading = true
