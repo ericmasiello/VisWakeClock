@@ -24,31 +24,39 @@ struct HomeClockView: View {
     _weatherManager = StateObject(wrappedValue: WeatherManager(locationManager: lm))
     _dateTimeManager = StateObject(wrappedValue: DateTimeManager())
     handleBackTapped = closure
-    _fontSize = State(wrappedValue: computeSize())
+    _fontSize = State(wrappedValue: computedFontSize)
   }
+  
+  var computedFontSize: CGFloat {
+    get {
+      let denominator = 5.0
+      var fudge = (((denominator - 1) * 2) * -1) // - 32
 
-  func computeSize() -> CGFloat {
-    let denominator = 5.0
-    var fudge = (((denominator - 1) * 2) * -1) // - 32
+      let deviceData = (userInterface: UIDevice.current.userInterfaceIdiom, orientation: UIDevice.current.orientation)
+      
+      switch(deviceData) {
+      case (.phone, .portrait), (.phone, .portraitUpsideDown):
+        fudge -= 12
+      case (.phone, .landscapeLeft),(.phone, .landscapeRight):
+        fudge -= 60
+      case (.pad, .portrait), (.pad, .portraitUpsideDown):
+        fudge -= 40
+      case (.pad, .landscapeLeft), (.pad, .landscapeRight):
+        fudge -= 30
+      default:
+        #warning("TODO: Unsupported user interface or orientation")
+        fudge += 0
+      }
 
-    /**
-     * TODO: this could use some work but these values appear to work reasonably at the moment.
-     * We should validate it against more device sizes like smaller iPhones, bigger iPhones, and even
-     * an iPad Mini
-     */
-    if UIDevice.current.userInterfaceIdiom == .phone {
-      fudge -= 12
-    } else if UIDevice.current.userInterfaceIdiom == .pad {
-      fudge -= 32
+      #if os(iOS)
+        let size = (UIScreen.main.bounds.width / denominator) + fudge
+      #else
+        #warning("TODO: Unsupported platform")
+        let size = CGFloat(0)
+      #endif
+      
+      return size
     }
-
-    #if os(iOS)
-      let size = (UIScreen.main.bounds.width / denominator) + fudge
-    #else
-      #warning("TODO: Unsupported platform")
-      let size = CGFloat(0)
-    #endif
-    return size
   }
 
   func formatTime(_ date: Date?) -> String {
@@ -96,8 +104,16 @@ struct HomeClockView: View {
           HStack {
             Text("Wake up time \(formatTime(userConfiguration.wakeupTime))")
             Spacer()
-            TemperatureView(temperatureF: weatherManager.weather?.current.temperature2m ?? 0.0)
-              .opacity(weatherManager.weather?.current.temperature2m == nil ? 0.0 : 1.0)
+            switch(weatherManager.status) {
+            case .idle, .error:
+              EmptyView()
+            case .loading:
+              TemperatureView(temperatureF: 0.0)
+                .opacity(0.0)
+            case .ready(let weatherData):
+              TemperatureView(temperatureF: weatherData.current.temperature2m)
+                .opacity(1.0)
+            }
           }
         }
         .fixedSize() // constrains it to widest element
@@ -114,8 +130,35 @@ struct HomeClockView: View {
     }
     .onChange(of: UIScreen.main.bounds.width) {
       // recompute fontSize whenever screen size changes
-      fontSize = computeSize()
+      fontSize = computedFontSize
     }
     .navigationBarBackButtonHidden()
   }
+}
+
+#Preview("Portrait", traits: .portrait) {
+  let userConfig = UserConfiguration(wakeupTime: Date.now)
+  let handleTapBack: HandleBackTapped = {
+    debugPrint("Got here!")
+  }
+  
+  return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
+}
+
+#Preview("Landscape Left", traits: .landscapeLeft) {
+  let userConfig = UserConfiguration(wakeupTime: Date.now)
+  let handleTapBack: HandleBackTapped = {
+    debugPrint("Got here!")
+  }
+  
+  return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
+}
+
+#Preview("Landscape Right", traits: .landscapeRight) {
+  let userConfig = UserConfiguration(wakeupTime: Date.now)
+  let handleTapBack: HandleBackTapped = {
+    debugPrint("Got here!")
+  }
+  
+  return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
 }
