@@ -14,10 +14,15 @@ enum WeatherError: Error {
   case invalidData
 }
 
+enum WeatherDataStatus {
+  case idle
+  case loading
+  case ready(WeatherData)
+  case error(Error)
+}
+
 class WeatherManager: ObservableObject {
-  @Published var weather: WeatherData?
-  @Published var isLoading = true
-  @Published var error: WeatherError?
+  @Published var status: WeatherDataStatus = .idle
 
   private var cachedCoordinates: (latitude: Double, longitude: Double)? = nil
   private var locationChangeCancellables = Set<AnyCancellable>()
@@ -31,19 +36,23 @@ class WeatherManager: ObservableObject {
     locationManager.coordinatesPublisher
       .sink { [weak self] coordinates in
         debugPrint("[coordinates change] Fetching Weather Data from WeatherManager")
+        self?.status = .loading
 
         self?.cachedCoordinates = (latitude: coordinates.latitude, longitude: coordinates.longitude)
 
         self?.coordinateChangeTask = Task {
           do {
-            self?.weather = try await WeatherClient.getWeather(
-              latitude: coordinates.latitude, longitude: coordinates.longitude)
+            guard let weatherData = try await WeatherClient.getWeather(
+              latitude: coordinates.latitude, longitude: coordinates.longitude) else {
+              throw WeatherError.invalidData
+            }
+            self?.status = .ready(weatherData)
           } catch {
+            self?.status = .error(error)
             ErrorLogger.log(error: error)
           }
         }
 
-        self?.isLoading = false
       }
       .store(in: &locationChangeCancellables)
 
@@ -52,12 +61,18 @@ class WeatherManager: ObservableObject {
       .sink { [weak self] _ in
         self?.timerTask = Task {
           debugPrint("[timer] Fetching Weather Data from WeatherManager")
+          self?.status = .loading
+          
           guard let coordinates = self?.cachedCoordinates else { return }
 
           do {
-            self?.weather = try await WeatherClient.getWeather(
-              latitude: coordinates.latitude, longitude: coordinates.longitude)
+            guard let weatherData = try await WeatherClient.getWeather(
+              latitude: coordinates.latitude, longitude: coordinates.longitude) else {
+              throw WeatherError.invalidData
+            }
+            self?.status = .ready(weatherData)
           } catch {
+            self?.status = .error(error)
             ErrorLogger.log(error: error)
           }
         }
