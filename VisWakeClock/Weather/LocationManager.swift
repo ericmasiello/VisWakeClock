@@ -15,7 +15,6 @@
 import Combine
 import CoreLocation
 import Foundation
-import Sentry
 
 struct GPSCoordinateNormalizer {
   /// Normalizes GPS coordinates and provides comparison with a minimum distance threshold
@@ -129,7 +128,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     guard let error = (error as NSError?), error.domain == kCLErrorDomain else {
-      SentrySDK.capture(error: error)
+      ErrorLogger.log(error: error)
       return
     }
 

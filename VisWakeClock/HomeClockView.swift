@@ -5,7 +5,6 @@
 //  Created by Eric Masiello on 11/11/24.
 //
 
-import Statsig
 import SwiftUI
 
 typealias HandleBackTapped = () -> Void
@@ -108,7 +107,7 @@ struct HomeClockView: View {
     .accessibilityLabel(Text("Current time is \(currentTime). Tap to return the main view"))
     .buttonStyle(.plain)
     .onAppear {
-      Statsig.logEvent("homeClockViewDidAppear")
+      AnalyticsLogger.log(eventName: "homeClockViewDidAppear")
       #if os(iOS)
         UIApplication.shared.isIdleTimerDisabled = self.userConfiguration.isIdleTimerDisabled
       #endif

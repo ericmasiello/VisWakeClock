@@ -4,7 +4,6 @@
 //
 //  Created by Eric Masiello on 11/11/24.
 //
-import Statsig
 import SwiftData
 import SwiftUI
 
@@ -47,7 +46,7 @@ struct SettingsView: View {
           }
           
           self.userConfiguration.wakeupTime = newValue
-          Statsig.logEvent("settingsView.wakeUpTimeChanged")
+          AnalyticsLogger.log(eventName: "settingsView.wakeUpTimeChanged")
         }
         
         Toggle("Keep screen on", isOn: $isIdleTimerDisabled)
@@ -56,7 +55,7 @@ struct SettingsView: View {
               return
             }
             self.userConfiguration.isIdleTimerDisabled = newValue
-            Statsig.logEvent("settingsView.keepScreenOnChanged", metadata: ["state": String(newValue)])
+            AnalyticsLogger.log(eventName: "settingsView.keepScreenOnChanged", metadata: ["state": String(newValue)])
           }
       }
       
@@ -74,7 +73,8 @@ struct SettingsView: View {
             Button("Add Event") {
               userConfiguration.countdownEvents.append(newCountdownEvent)
               newCountdownEvent = CountdownEvent(date: Date(), name: "")
-              Statsig.logEvent("settingsView.newEventAdded")
+              
+              AnalyticsLogger.log(eventName: "settingsView.newEventAdded")
             }
             .disabled(newCountdownEvent.name.isEmpty)
           case .edit(id: let id):
@@ -84,7 +84,7 @@ struct SettingsView: View {
               newCountdownEvent = CountdownEvent(date: Date(), name: "")
               newCountdownEventMode = .add
               
-              Statsig.logEvent("settingsView.existingEventUpdated")
+              AnalyticsLogger.log(eventName: "settingsView.existingEventUpdated")
             }
             .disabled(newCountdownEvent.name.isEmpty)
         }
@@ -92,13 +92,13 @@ struct SettingsView: View {
       
       Section("Countdown Events") {
         List(userConfiguration.sortedCountdownEvents) { event in
-          EventNameView(event: event, mode: Statsig.checkGate("edit_event") ? .editable : .readonly, handleRemoveEvent: { event in
+          EventNameView(event: event, mode: AnalyticsLogger.checkGate(gateName: "edit_event") ? .editable : .readonly, handleRemoveEvent: { event in
             guard let index = userConfiguration.countdownEvents.firstIndex(of: event) else {
               return
             }
                   
             userConfiguration.countdownEvents.remove(at: index)
-            Statsig.logEvent("settingsView.eventDeleted")
+            AnalyticsLogger.log(eventName: "settingsView.eventDeleted")
           }) { updateEvent in
             newCountdownEvent.name = updateEvent.name
             newCountdownEvent.date = updateEvent.date
@@ -115,7 +115,7 @@ struct SettingsView: View {
       .navigationBarTitleDisplayMode(.inline)
     #endif
       .onAppear {
-        Statsig.logEvent("settingsViewDidAppear")
+        AnalyticsLogger.log(eventName: "settingsViewDidAppear")
       }
   }
 }
