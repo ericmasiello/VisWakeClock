@@ -438,15 +438,17 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = J7MY3N22B3;
+				DEVELOPMENT_TEAM = R6SSQ5A38J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VisWakeClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "VizWake Clock";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_UILaunchStoryboardName = SplashScreen;
 				"INFOPLIST_KEY_UILaunchStoryboardName[sdk=*]" = SplashScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
@@ -457,7 +459,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VisWake-Clock";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VizWake-Clock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
@@ -478,15 +480,17 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = J7MY3N22B3;
+				DEVELOPMENT_TEAM = R6SSQ5A38J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VisWakeClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "VizWake Clock";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We require your location to get the local weather";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We require your location to get the local weather";
+				INFOPLIST_KEY_UILaunchStoryboardName = SplashScreen;
 				"INFOPLIST_KEY_UILaunchStoryboardName[sdk=*]" = SplashScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
@@ -497,7 +501,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VisWake-Clock";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.synbydesign.VizWake-Clock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
