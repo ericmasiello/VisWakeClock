@@ -1,4 +1,5 @@
 import Playgrounds
+import SwiftData
 import SwiftUI
 //
 //  OffsetClock.swift
@@ -8,92 +9,110 @@ import SwiftUI
 //
 
 struct CountdownView: View {
+//  var minutes: Int {
+//    didSet {
+//      // Reset the pulse animation when minutes changes
+//      pulse = false
+//    }
+//  }
+  
+  var minutes: Int
+  
   @State private var enabled: Bool = false
   @State private var pulse: Bool = false
-  var size: CGFloat = 10
-  var viewMode: ViewMode = .dim
-  var now: Date
-  var offsetMinutes: Int = 30
+  var textSize: CGFloat = 0
   @StateObject private var countdownManager = CountdownManager()
-
+  
   var countdown: some View {
     let unit = countdownManager.displayUnit.name
     let minsAsString = String(countdownManager.displayValue)
     let ui = minsAsString.map { ch in
-      FlipClockNumberView(value: String(ch), size: size, color: .pink)
+      FlipClockNumberView(value: String(ch), size: textSize, color: .pink)
     }
 
     let unitUi = unit.split(separator: "").map {
-      FlipClockNumberView(value: String($0), size: size * 0.75)
+      FlipClockNumberView(value: String($0), size: textSize * 0.75)
     }
 
     return HStack(alignment: .firstTextBaseline) {
       ForEach(ui.indices, id: \.self) { index in
         ui[index]
       }
-      Spacer().frame(width: size * 0.25, height: size)
+      Spacer().frame(width: textSize * 0.25, height: textSize)
       ForEach(unitUi.indices, id: \.self) { index in
         unitUi[index]
       }
     }
   }
+  
+//  init(minutes: Int, textSize: CGFloat) {
+//    self.minutes = minutes
+//    self.textSize = textSize
+//  }
 
   var body: some View {
-    if !enabled {
-      Button("Start \(offsetMinutes) minute countdown") {
-        enabled.toggle()
-        pulse.toggle()
-        countdownManager.startCountdown(minutes: offsetMinutes)
-      }
-      .font(Font.largeTitle.bold())
-      .padding(.horizontal, 24)
-      .padding(.vertical, 12)
-      .buttonStyle(.bordered)
-      .buttonBorderShape(.capsule)
-      .tint(pulse ? .pink : .pink.opacity(0.7))
-      .overlay(
-        Capsule()
-          .stroke(pulse ? Color.pink : Color.pink.opacity(0.7), lineWidth: 2)
-      )
-      .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 3)
-    } else {
-      countdown
-        .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 4)
-        // resets the enabled state once the countdown is done
-        .onReceive(countdownManager.$displayValue) { newValue in
-          if enabled && newValue == 0 {
+    Group {
+      if !enabled {
+        Button("Start \(minutes) minute countdown") {
+          enabled.toggle()
+          pulse.toggle()
+          countdownManager.startCountdown(minutes: minutes)
+        }
+        .font(Font.largeTitle.bold())
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.capsule)
+        .tint(pulse ? .pink : .pink.opacity(0.7))
+        .overlay(
+          Capsule()
+            .stroke(pulse ? Color.pink : Color.pink.opacity(0.7), lineWidth: 2)
+        )
+        .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 3)
+      } else {
+        countdown
+          .onTapGesture {
             enabled = false
           }
-        }
+          .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 4)
+          // resets the enabled state once the countdown is done
+          .onReceive(countdownManager.$displayValue) { newValue in
+            if enabled && newValue == 0 {
+              enabled = false
+            }
+          }
+      }
+    }
+    .onChange(of: minutes) { _, _ in
+      // Re-trigger the pulse animation on minutes change in a non-escaping context
+      pulse = false
+      DispatchQueue.main.async {
+        pulse = true
+      }
     }
   }
 }
 
-#Preview("Test") {
-  let mins = 2234
-  let minsAsString = String(mins)
-  let ui = minsAsString.split(separator: "").map {
-    FlipClockNumberView(value: String($0), size: 20)
-  }
-
-  HStack {
-    ForEach(ui.indices, id: \.self) { index in
-      ui[index]
-    }
-  }
-}
-
-#Preview("1 min countdown") {
-  CountdownView(size: 100, now: Date.now, offsetMinutes: 1).preferredColorScheme(.dark)
+#Preview("Default countdown with user config") {
+  
+  let config = ModelConfiguration(isStoredInMemoryOnly: true)
+  let container = try! ModelContainer(for: UserConfiguration.self, configurations: config)
+  
+  let userConfig = UserConfiguration(
+    wakeupTime: DateHelper.createDateFromString(hour: 6, minute: 15)!
+  )
+  
+  CountdownView(minutes: userConfig.countdownMinutes, textSize: 100).preferredColorScheme(.dark)
 }
 
 #Preview("2 min countdown") {
-  CountdownView(size: 100, now: Date.now, offsetMinutes: 2).preferredColorScheme(.dark)
+  CountdownView(minutes: 2, textSize: 100).preferredColorScheme(.dark)
 }
 
-#Preview("Default countdown") {
-  CountdownView(size: 100, now: Date.now).preferredColorScheme(.dark)
+#Preview("1 min countdown") {
+  CountdownView(minutes: 1, textSize: 100).preferredColorScheme(.dark)
 }
+
 // MARK: - Reusable Pulse Opacity Modifier
 private struct PulseOpacityModifier: ViewModifier {
   @Binding var isPulsing: Bool

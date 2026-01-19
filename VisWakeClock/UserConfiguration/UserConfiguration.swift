@@ -21,6 +21,7 @@ class UserConfiguration {
   var wakeupDuration: Double = 45
   var isIdleTimerDisabled: Bool = true
   var countdownEvents: [CountdownEvent] = []
+  var countdownMinutes: Int = 20
   
   var stringId: String { id.uuidString }
 

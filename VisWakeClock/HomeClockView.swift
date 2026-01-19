@@ -136,8 +136,11 @@ struct HomeClockView: View {
       .navigationBarBackButtonHidden()
 
       VStack {
-        CountdownView(size: fontSize * 0.5, viewMode: .active, now: dateTimeManager.now)
         Spacer()
+        HStack {
+          Spacer()
+          CountdownView(minutes: userConfiguration.countdownMinutes, textSize: fontSize * 0.5)
+        }
       }
     }
   }

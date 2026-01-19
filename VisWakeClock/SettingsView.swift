@@ -13,10 +13,12 @@ struct SettingsView: View {
   @State private var isIdleTimerDisabled: Bool
   @State private var newCountdownEvent = CountdownEvent(date: Date(), name: "")
   @State private var newCountdownEventMode: EditEventMode = .add
+  @State private var countdownMinutes: Int = 0
 
   init(userConfiguration: UserConfiguration) {
     self.userConfiguration = userConfiguration
     self.isIdleTimerDisabled = userConfiguration.isIdleTimerDisabled
+    self.countdownMinutes = userConfiguration.countdownMinutes
     
     self.wakeupTime = userConfiguration.wakeupTime ?? DateHelper.createDateFromString(hour: 12, minute: 0) ?? Date()
   }
@@ -48,7 +50,7 @@ struct SettingsView: View {
           self.userConfiguration.wakeupTime = newValue
           AnalyticsLogger.log(eventName: "settingsView.wakeUpTimeChanged")
         }
-        
+
         Toggle("Keep screen on", isOn: $isIdleTimerDisabled)
           .onChange(of: isIdleTimerDisabled) { _, newValue in
             if newValue == self.userConfiguration.isIdleTimerDisabled {
@@ -57,6 +59,21 @@ struct SettingsView: View {
             self.userConfiguration.isIdleTimerDisabled = newValue
             AnalyticsLogger.log(eventName: "settingsView.keepScreenOnChanged", metadata: ["state": String(newValue)])
           }
+        
+        Picker("Countdown minutes", selection: $countdownMinutes) {
+          ForEach(1 ... 60, id: \.self) { minute in
+            Text("\(minute) minute\(minute == 1 ? "" : "s")").tag(minute)
+          }
+        }
+        .onChange(of: countdownMinutes) { _, newValue in
+          
+          if newValue == self.userConfiguration.countdownMinutes {
+            return
+          }
+          
+          self.userConfiguration.countdownMinutes = newValue
+          AnalyticsLogger.log(eventName: "settingsView.countdownMinutesChanged")
+        }
       }
       
       // Explore converting to a popup sheet
