@@ -26,37 +26,35 @@ struct HomeClockView: View {
     handleBackTapped = closure
     _fontSize = State(wrappedValue: computedFontSize)
   }
-  
+
   var computedFontSize: CGFloat {
-    get {
-      let denominator = 5.0
-      var fudge = (((denominator - 1) * 2) * -1) // - 32
+    let denominator = 5.0
+    var fudge = (((denominator - 1) * 2) * -1) // - 32
 
-      let deviceData = (userInterface: UIDevice.current.userInterfaceIdiom, orientation: UIDevice.current.orientation)
-      
-      switch(deviceData) {
-      case (.phone, .portrait), (.phone, .portraitUpsideDown):
-        fudge -= 12
-      case (.phone, .landscapeLeft),(.phone, .landscapeRight):
-        fudge -= 60
-      case (.pad, .portrait), (.pad, .portraitUpsideDown):
-        fudge -= 40
-      case (.pad, .landscapeLeft), (.pad, .landscapeRight):
-        fudge -= 30
-      default:
-        #warning("TODO: Unsupported user interface or orientation")
-        fudge += 0
-      }
+    let deviceData = (userInterface: UIDevice.current.userInterfaceIdiom, orientation: UIDevice.current.orientation)
 
-      #if os(iOS)
-        let size = (UIScreen.main.bounds.width / denominator) + fudge
-      #else
-        #warning("TODO: Unsupported platform")
-        let size = CGFloat(0)
-      #endif
-      
-      return size
+    switch deviceData {
+    case (.phone, .portrait), (.phone, .portraitUpsideDown):
+      fudge -= 12
+    case (.phone, .landscapeLeft), (.phone, .landscapeRight):
+      fudge -= 60
+    case (.pad, .portrait), (.pad, .portraitUpsideDown):
+      fudge -= 40
+    case (.pad, .landscapeLeft), (.pad, .landscapeRight):
+      fudge -= 30
+    default:
+      #warning("TODO: Unsupported user interface or orientation")
+      fudge += 0
     }
+
+    #if os(iOS)
+      let size = (UIScreen.main.bounds.width / denominator) + fudge
+    #else
+      #warning("TODO: Unsupported platform")
+      let size = CGFloat(0)
+    #endif
+
+    return size
   }
 
   func formatTime(_ date: Date?) -> String {
@@ -91,57 +89,76 @@ struct HomeClockView: View {
   }
 
   var body: some View {
-    BounceView(recomputeValue: fontSize) {
-      Button(action: {
-        handleBackTapped()
-      }) {
-        VStack(alignment: .leading, spacing: 0) {
-          if viewMode == .active {
-            EmojiView(option: emojiOption, size: fontSize)
-          }
-          DaysUntilView(events: userConfiguration.countdownEvents).padding(.bottom, 8).font(.headline)
-          ClockView(size: fontSize, viewMode: viewMode, now: dateTimeManager.now)
-          HStack {
-            Text("Wake up time \(formatTime(userConfiguration.wakeupTime))")
-            Spacer()
-            switch(weatherManager.status) {
-            case .idle, .error:
-              EmptyView()
-            case .loading:
-              TemperatureView(temperatureF: 0.0)
-                .opacity(0.0)
-            case .ready(let weatherData):
-              TemperatureView(temperatureF: weatherData.current.temperature2m)
-                .opacity(1.0)
+    ZStack(alignment: .center) {
+      BounceView(recomputeValue: fontSize) {
+        Button(action: {
+          handleBackTapped()
+        }) {
+          VStack(alignment: .leading, spacing: 0) {
+            if viewMode == .active {
+              EmojiView(option: emojiOption, size: fontSize)
+            }
+            DaysUntilView(events: userConfiguration.countdownEvents).padding(.bottom, 8).font(.headline)
+            ClockView(size: fontSize, viewMode: viewMode, now: dateTimeManager.now)
+            VStack(alignment: .trailing) {
+              HStack {
+                Text("Wake up time \(formatTime(userConfiguration.wakeupTime))")
+                Spacer()
+                switch weatherManager.status {
+                case .idle, .error:
+                  EmptyView()
+                case .loading:
+                  TemperatureView(temperatureF: 0.0)
+                    .opacity(0.0)
+                case .ready(let weatherData):
+                  TemperatureView(temperatureF: weatherData.current.temperature2m)
+                    .opacity(1.0)
+                }
+              }
             }
           }
+          .fixedSize() // constrains it to widest element
+          .opacity(viewMode == .dim ? 0.65 : 1)
         }
-        .fixedSize() // constrains it to widest element
-        .opacity(viewMode == .dim ? 0.65 : 1)
+      }
+      .accessibilityLabel(Text("Current time is \(currentTime). Tap to return the main view"))
+      .buttonStyle(.plain)
+      .onAppear {
+        AnalyticsLogger.log(eventName: "homeClockViewDidAppear")
+        #if os(iOS)
+          UIApplication.shared.isIdleTimerDisabled = self.userConfiguration.isIdleTimerDisabled
+        #endif
+      }
+      .onChange(of: UIScreen.main.bounds.width) {
+        // recompute fontSize whenever screen size changes
+        fontSize = computedFontSize
+      }
+      .navigationBarBackButtonHidden()
+
+      VStack {
+        CountdownView(size: fontSize * 0.5, viewMode: .active, now: dateTimeManager.now)
+        Spacer()
       }
     }
-    .accessibilityLabel(Text("Current time is \(currentTime). Tap to return the main view"))
-    .buttonStyle(.plain)
-    .onAppear {
-      AnalyticsLogger.log(eventName: "homeClockViewDidAppear")
-      #if os(iOS)
-        UIApplication.shared.isIdleTimerDisabled = self.userConfiguration.isIdleTimerDisabled
-      #endif
-    }
-    .onChange(of: UIScreen.main.bounds.width) {
-      // recompute fontSize whenever screen size changes
-      fontSize = computedFontSize
-    }
-    .navigationBarBackButtonHidden()
   }
 }
 
 #Preview("Portrait", traits: .portrait) {
+  let oneHour: Double = 60 * 60
+  let userConfig = UserConfiguration(wakeupTime: Date.now + oneHour)
+  let handleTapBack: HandleBackTapped = {
+    debugPrint("Got here!")
+  }
+
+  return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
+}
+
+#Preview("Portrait Wake Up", traits: .portrait) {
   let userConfig = UserConfiguration(wakeupTime: Date.now)
   let handleTapBack: HandleBackTapped = {
     debugPrint("Got here!")
   }
-  
+
   return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
 }
 
@@ -150,7 +167,7 @@ struct HomeClockView: View {
   let handleTapBack: HandleBackTapped = {
     debugPrint("Got here!")
   }
-  
+
   return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
 }
 
@@ -159,6 +176,6 @@ struct HomeClockView: View {
   let handleTapBack: HandleBackTapped = {
     debugPrint("Got here!")
   }
-  
+
   return HomeClockView(userConfiguration: userConfig, handleBackTapped: handleTapBack).preferredColorScheme(.dark)
 }
