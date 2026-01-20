@@ -9,20 +9,13 @@ import SwiftUI
 //
 
 struct CountdownView: View {
-//  var minutes: Int {
-//    didSet {
-//      // Reset the pulse animation when minutes changes
-//      pulse = false
-//    }
-//  }
-  
-  var minutes: Int
-  
+  var seconds: Int
+
   @State private var enabled: Bool = false
   @State private var pulse: Bool = false
   var textSize: CGFloat = 0
   @StateObject private var countdownManager = CountdownManager()
-  
+
   var countdown: some View {
     let unit = countdownManager.displayUnit.name
     let minsAsString = String(countdownManager.displayValue)
@@ -45,75 +38,65 @@ struct CountdownView: View {
     }
   }
   
-//  init(minutes: Int, textSize: CGFloat) {
-//    self.minutes = minutes
-//    self.textSize = textSize
-//  }
+  var countDownLabel: String {
+    if seconds < 60 {
+      return "\(seconds) second"
+    }
+    return "\(seconds / 60) minute"
+  }
+
+  var message: String {
+    if enabled {
+      "Countdown: \(String(countdownManager.displayValue)) \(countdownManager.displayUnit.name)"
+    } else {
+      "Start \(countDownLabel) countdown"
+    }
+  }
 
   var body: some View {
-    Group {
-      if !enabled {
-        Button("Start \(minutes) minute countdown") {
-          enabled.toggle()
-          pulse.toggle()
-          countdownManager.startCountdown(minutes: minutes)
-        }
-        .font(Font.largeTitle.bold())
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.capsule)
-        .tint(pulse ? .pink : .pink.opacity(0.7))
-        .overlay(
-          Capsule()
-            .stroke(pulse ? Color.pink : Color.pink.opacity(0.7), lineWidth: 2)
-        )
-        .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 3)
-      } else {
-        countdown
-          .onTapGesture {
-            enabled = false
-          }
-          .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 4)
-          // resets the enabled state once the countdown is done
-          .onReceive(countdownManager.$displayValue) { newValue in
-            if enabled && newValue == 0 {
-              enabled = false
-            }
-          }
-      }
+    Button(message) {
+      enabled.toggle()
+      countdownManager.startCountdown(seconds: seconds)
     }
-    .onChange(of: minutes) { _, _ in
-      // Re-trigger the pulse animation on minutes change in a non-escaping context
-      pulse = false
-      DispatchQueue.main.async {
-        pulse = true
-      }
-    }
+    .font(Font.largeTitle.bold())
+    .padding(.horizontal, 24)
+    .padding(.vertical, 12)
+    .buttonStyle(.bordered)
+    .buttonBorderShape(.capsule)
+    .tint(pulse ? .pink : .pink.opacity(0.7))
+    .overlay(
+      Capsule()
+        .stroke(pulse ? Color.pink : Color.pink.opacity(0.7), lineWidth: 2)
+    )
+    .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 3)
   }
 }
 
 #Preview("Default countdown with user config") {
-  
   let config = ModelConfiguration(isStoredInMemoryOnly: true)
   let container = try! ModelContainer(for: UserConfiguration.self, configurations: config)
-  
+
   let userConfig = UserConfiguration(
     wakeupTime: DateHelper.createDateFromString(hour: 6, minute: 15)!
   )
-  
-  CountdownView(minutes: userConfig.countdownMinutes, textSize: 100).preferredColorScheme(.dark)
+
+  CountdownView(seconds: userConfig.countdownMinutes * 60, textSize: 100).preferredColorScheme(.dark)
 }
 
 #Preview("2 min countdown") {
-  CountdownView(minutes: 2, textSize: 100).preferredColorScheme(.dark)
+  CountdownView(seconds: 120, textSize: 100).preferredColorScheme(.dark)
 }
 
 #Preview("1 min countdown") {
-  CountdownView(minutes: 1, textSize: 100).preferredColorScheme(.dark)
+  CountdownView(seconds: 60, textSize: 100).preferredColorScheme(.dark)
+}
+
+#Preview("10 sec countdown") {
+  CountdownView(seconds: 10, textSize: 100).preferredColorScheme(.dark)
 }
 
 // MARK: - Reusable Pulse Opacity Modifier
+
 private struct PulseOpacityModifier: ViewModifier {
   @Binding var isPulsing: Bool
   var minOpacity: Double
@@ -136,4 +119,3 @@ private extension View {
     modifier(PulseOpacityModifier(isPulsing: isPulsing, minOpacity: min, maxOpacity: max, duration: duration))
   }
 }
-

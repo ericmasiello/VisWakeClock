@@ -139,7 +139,7 @@ struct HomeClockView: View {
         Spacer()
         HStack {
           Spacer()
-          CountdownView(minutes: userConfiguration.countdownMinutes, textSize: fontSize * 0.5)
+          CountdownView(seconds: userConfiguration.countdownMinutes * 60, textSize: fontSize * 0.5)
         }
       }
     }

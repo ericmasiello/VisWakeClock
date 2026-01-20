@@ -31,9 +31,10 @@ final class CountdownManager: ObservableObject {
   private var timer: Task<Void, Never>?
 
   /// Start a countdown for the specified number of minutes.
-  func startCountdown(minutes: Int) {
+  func startCountdown(seconds: Int) {
     stopCountdown()
-    secondsRemaining = minutes * 60
+    let minutes = seconds / 60
+    secondsRemaining = seconds
     minutesLeft = max(0, minutes)
     if secondsRemaining >= 60 {
       displayUnit = .minutes
