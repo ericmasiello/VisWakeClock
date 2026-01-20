@@ -24,10 +24,10 @@ struct CountdownView: View {
   }
 
   var message: String {
-    if enabled && countdownManager.displayValue == 0 {
+    if enabled && countdownManager.isRunning == false {
       "All done"
     } else if enabled {
-      "Countdown: \(String(countdownManager.displayValue)) \(countdownManager.displayUnit.name)"
+      "Remaining: \(countdownManager.value)"
     } else {
       "Start \(countDownLabel) countdown"
     }
@@ -38,7 +38,7 @@ struct CountdownView: View {
       return Color.cyan
     }
     
-    if countdownManager.displayValue == 0 {
+    if countdownManager.isRunning == false {
       return Color.green
     }
     return Color.pink
@@ -55,7 +55,7 @@ struct CountdownView: View {
       }
       
     }
-    .onReceive(countdownManager.$displayValue) { value in
+    .onReceive(countdownManager.$secondsRemaining) { value in
       if value == 0 {
         countdownManager.stopCountdown()
       }
