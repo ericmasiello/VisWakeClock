@@ -33,37 +33,37 @@ final class CountdownManager: ObservableObject {
   /// Start a countdown for the specified number of minutes.
   func startCountdown(seconds: Int) {
     stopCountdown()
-    let minutes = seconds / 60
-    secondsRemaining = seconds
-    let minutesLeft = max(0, minutes)
+
+    secondsRemaining = max(0, seconds)
+
+    // Initialize display based on starting seconds
     if secondsRemaining >= 60 {
       displayUnit = .minutes
-      displayValue = minutesLeft
+      displayValue = secondsRemaining / 60
     } else {
       displayUnit = .seconds
       displayValue = secondsRemaining
     }
-    timer = Task {
-      while secondsRemaining > 0 && !Task.isCancelled {
+
+    timer = Task { [weak self] in
+      guard let self = self else { return }
+      while self.secondsRemaining > 0 && !Task.isCancelled {
         try? await Task.sleep(for: .seconds(1))
-        secondsRemaining -= 1
-        let nextMinutes = max(0, secondsRemaining / 60)
-//        if nextMinutes != minutesLeft {
-//          minutesLeft = nextMinutes
-//        }
-        // Update display mode/value: show minutes when >= 60s remain, otherwise seconds
-        if secondsRemaining >= 60 {
-          if displayUnit != .minutes { displayUnit = .minutes }
-          if displayValue != minutesLeft { displayValue = minutesLeft }
+        self.secondsRemaining -= 1
+
+        if self.secondsRemaining >= 60 {
+          let currentMinutes = self.secondsRemaining / 60
+          if self.displayUnit != .minutes { self.displayUnit = .minutes }
+          if self.displayValue != currentMinutes { self.displayValue = currentMinutes }
         } else {
-          if displayUnit != .seconds { displayUnit = .seconds }
-          if displayValue != secondsRemaining { displayValue = secondsRemaining }
+          if self.displayUnit != .seconds { self.displayUnit = .seconds }
+          if self.displayValue != self.secondsRemaining { self.displayValue = self.secondsRemaining }
         }
       }
-      if secondsRemaining <= 0 {
-//        minutesLeft = 0
-        displayUnit = .seconds
-        displayValue = 0
+
+      if self.secondsRemaining <= 0 {
+        self.displayUnit = .seconds
+        self.displayValue = 0
       }
     }
   }
