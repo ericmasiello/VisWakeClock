@@ -24,11 +24,24 @@ struct CountdownView: View {
   }
 
   var message: String {
-    if enabled {
+    if enabled && countdownManager.displayValue == 0 {
+      "All done"
+    } else if enabled {
       "Countdown: \(String(countdownManager.displayValue)) \(countdownManager.displayUnit.name)"
     } else {
       "Start \(countDownLabel) countdown"
     }
+  }
+  
+  var highlightColor: Color {    
+    if !enabled {
+      return Color.cyan
+    }
+    
+    if countdownManager.displayValue == 0 {
+      return Color.green
+    }
+    return Color.pink
   }
 
   var body: some View {
@@ -52,10 +65,10 @@ struct CountdownView: View {
     .padding(.vertical, 12)
     .buttonStyle(.bordered)
     .buttonBorderShape(.capsule)
-    .tint(pulse ? .pink : .pink.opacity(0.7))
+    .tint(pulse ? highlightColor : highlightColor.opacity(0.7))
     .overlay(
       Capsule()
-        .stroke(pulse ? Color.pink : Color.pink.opacity(0.7), lineWidth: 2)
+        .stroke(pulse ? highlightColor : highlightColor.opacity(0.7), lineWidth: 2)
     )
     .pulseOpacity($pulse, min: 0.5, max: 1.0, duration: 3)
   }
