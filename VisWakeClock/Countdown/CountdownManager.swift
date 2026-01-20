@@ -8,9 +8,9 @@
 import Combine
 import Foundation
 
+@MainActor
 final class CountdownManager: ObservableObject {
-  /// The number of minutes remaining (rounded down, will be 0 when finished)
-  @Published private(set) var minutesLeft: Int = 0
+
   /// Represents what should be shown to the UI: minutes when >= 60s remain, otherwise seconds
   enum DisplayUnit {
     case minutes, seconds
@@ -35,7 +35,7 @@ final class CountdownManager: ObservableObject {
     stopCountdown()
     let minutes = seconds / 60
     secondsRemaining = seconds
-    minutesLeft = max(0, minutes)
+    let minutesLeft = max(0, minutes)
     if secondsRemaining >= 60 {
       displayUnit = .minutes
       displayValue = minutesLeft
@@ -48,9 +48,9 @@ final class CountdownManager: ObservableObject {
         try? await Task.sleep(for: .seconds(1))
         secondsRemaining -= 1
         let nextMinutes = max(0, secondsRemaining / 60)
-        if nextMinutes != minutesLeft {
-          minutesLeft = nextMinutes
-        }
+//        if nextMinutes != minutesLeft {
+//          minutesLeft = nextMinutes
+//        }
         // Update display mode/value: show minutes when >= 60s remain, otherwise seconds
         if secondsRemaining >= 60 {
           if displayUnit != .minutes { displayUnit = .minutes }
@@ -61,7 +61,7 @@ final class CountdownManager: ObservableObject {
         }
       }
       if secondsRemaining <= 0 {
-        minutesLeft = 0
+//        minutesLeft = 0
         displayUnit = .seconds
         displayValue = 0
       }
@@ -75,7 +75,8 @@ final class CountdownManager: ObservableObject {
   }
 
   deinit {
-    stopCountdown()
+    timer?.cancel()
+    timer = nil
   }
 }
 
@@ -83,3 +84,4 @@ final class CountdownManager: ObservableObject {
 // let countdown = CountdownManager()
 // countdown.startCountdown(minutes: 5)
 // countdown.$minutesLeft.sink { print("Minutes Left: \($0)") }
+

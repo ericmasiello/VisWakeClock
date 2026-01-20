@@ -16,28 +16,6 @@ struct CountdownView: View {
   var textSize: CGFloat = 0
   @StateObject private var countdownManager = CountdownManager()
 
-  var countdown: some View {
-    let unit = countdownManager.displayUnit.name
-    let minsAsString = String(countdownManager.displayValue)
-    let ui = minsAsString.map { ch in
-      FlipClockNumberView(value: String(ch), size: textSize, color: .pink)
-    }
-
-    let unitUi = unit.split(separator: "").map {
-      FlipClockNumberView(value: String($0), size: textSize * 0.75)
-    }
-
-    return HStack(alignment: .firstTextBaseline) {
-      ForEach(ui.indices, id: \.self) { index in
-        ui[index]
-      }
-      Spacer().frame(width: textSize * 0.25, height: textSize)
-      ForEach(unitUi.indices, id: \.self) { index in
-        unitUi[index]
-      }
-    }
-  }
-  
   var countDownLabel: String {
     if seconds < 60 {
       return "\(seconds) second"
@@ -55,8 +33,19 @@ struct CountdownView: View {
 
   var body: some View {
     Button(message) {
-      enabled.toggle()
-      countdownManager.startCountdown(seconds: seconds)
+      if (!enabled) {
+        enabled = true
+        countdownManager.startCountdown(seconds: seconds)
+      } else {
+        enabled = false
+        countdownManager.stopCountdown()
+      }
+      
+    }
+    .onReceive(countdownManager.$displayValue) { value in
+      if value == 0 {
+        countdownManager.stopCountdown()
+      }
     }
     .font(Font.largeTitle.bold())
     .padding(.horizontal, 24)
